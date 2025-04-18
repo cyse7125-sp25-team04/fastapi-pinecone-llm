@@ -1,0 +1,39 @@
+# pinecone-app-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pinecone-app
+  namespace: webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pinecone-app
+  template:
+    metadata:
+      labels:
+        app: pinecone-app
+    spec:
+      imagePullSecrets:
+      - name: docker-login-secret
+      containers:
+      - name: pinecone-app
+        image: csye712504/pinecone-ml:latest
+        ports:
+          - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pinecone-app
+  namespace: webapp
+spec:
+  selector:
+    app: pinecone-app
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+
+# for minikube to use local docker images use: eval $(minikube docker-env)
+# to unset use: eval $(minikube docker-env --unset)
